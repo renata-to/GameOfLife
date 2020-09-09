@@ -7,21 +7,36 @@ namespace GameOfLife
 
         private static void Main(string[] args)
         {
+
             Console.Write("Enter board width: ");
             int width = int.Parse(Console.ReadLine());
+            if (width <= 0 || width > 50)
+            {
+                Console.WriteLine("Entered number is out of range. Please enter a number from 1 to 50.");
+            }
+
             Console.Write("Enter board heigth: ");
             int heigth = int.Parse(Console.ReadLine());
+            if (heigth <= 0 || width > 50)
+            {
+                Console.WriteLine("Entered number is out of range. Please enter a number from 1 to 50.");
+            }
+            //check entered value
+            //check entered number
 
-            Game session = new Game(heigth, width);                  // create a new session
+            Game session = new Game(heigth, width);
 
-            session.StartGame();                        // 1. start a new game                // 2. generate field
+            session.StartGame();
 
             int gen = 0;        // will be used for generation counting
 
-            while (gen++ < 100)                         // 3. grow the generation
+            while (gen++ < 100)
             {
                 session.FullCycle();
-                System.Threading.Thread.Sleep(1000);     // 4. repeat
+                Console.WriteLine();
+                Console.WriteLine("Generation: " + gen);
+                Console.Write("Alive cells: " );
+                System.Threading.Thread.Sleep(1000);
             }
         }
     }
