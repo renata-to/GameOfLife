@@ -10,7 +10,7 @@ namespace GameOfLife
         public int width;
         public bool[,] Table;
 
-        public Game (int heigth, int width)             //1.
+        public Game (int heigth, int width)
         {
             this.heigth = heigth;
             this.width = width;
@@ -30,7 +30,7 @@ namespace GameOfLife
                 Console.WriteLine("Entered number is negative. Please enter a positive number.");
             }
             */
-           // Console.Write("Enter board heigth: ");
+            // Console.Write("Enter board heigth: ");
             // heigth = int.Parse(Console.ReadLine());
             /*
             CheckTheEnteredValue();
@@ -41,7 +41,7 @@ namespace GameOfLife
 
         }
 
-        public void CheckTheEnteredValue()      //checks if entered value is numeric
+        public void CheckTheEnteredValue()      //checks if entered value is numeric        can be moved to program
         {
             int value;
             while (!int.TryParse(Console.ReadLine(), out value))
@@ -49,7 +49,7 @@ namespace GameOfLife
                 Console.WriteLine("Entered value is not numeric.");
             }
         }
-        private void GenerateBoard()                     //generates new board with random chars and prints it out       2.
+        private void GenerateBoard()                     //generates new board with random chars and prints it out
         {
             //generate random numbers for bool array
             Random randomBool = new Random();
@@ -64,7 +64,7 @@ namespace GameOfLife
             }
         }
 
-        public void OutputBoard()                               // 3.
+        public void OutputBoard()
         {
             Console.Clear();
             Console.WriteLine();
@@ -79,72 +79,51 @@ namespace GameOfLife
             //Console.SetCursorPosition(0, Console.WindowTop);
         }
 
-        /*private int NumOfNeighbours(int col, int row)       //counts the number of neighbours           4.
+        private void Generation()
         {
-            int Neighbours = 0;
+            for (int x = 0; x < heigth; x++)
+            {
+                for (int y = 0; y < width; y++)
+                {
+                    int numOfAliveNeighbors = NumOfNeighbors(x, y);
 
-            for (int x = col - 1; x < col + 2; x++){
-                for (int y = row - 1; y < row + 2; y++){
-                    if (!((x < 0 || y < 0) || (x >= heigth || y >= width))){
-                        if (Table[x, y] == true) Neighbours++;
+                    if (Table[x, y])
+                    {
+                        if (numOfAliveNeighbors < 2)
+                        {
+                            Table[x, y] = false;
+                        }
+
+                        if (numOfAliveNeighbors > 3)
+                        {
+                            Table[x, y] = false;
+                        }
+                    }
+                    else
+                    {
+                        if (numOfAliveNeighbors == 3)
+                        {
+                            Table[x, y] = true;
+                        }
                     }
                 }
             }
-            return Neighbours;
-        }*/
+        }
 
-        private int GetNeighbors(int x, int y)
+        private int NumOfNeighbors(int row, int col)
         {
             int NumOfAliveNeighbors = 0;
-
-            for (int i = x - 1; i < x + 2; i++)
+            for (int x = row - 1; x < row + 2; x++)
             {
-                for (int j = y - 1; j < y + 2; j++)
+                for (int y = col - 1; y < col + 2; y++)
                 {
-                    if (!((i < 0 || j < 0) || (i >= Table.GetLength(1) || j >= Table.GetLength(1))))
+                    if (!((x < 0 || y < 0) || (x >= heigth || y >= width)))
                     {
-                        if (Table[i, j] == true) { NumOfAliveNeighbors++; }
+                        if (Table[x, y] == true) NumOfAliveNeighbors++;
                     }
                 }
             }
             return NumOfAliveNeighbors;
-
-        }
-            public void Generation()                        //grows the field based on NumOfNeighbours          5.
-        {
-            // if <2 cell dies
-            // if 2 or 3 cell lives
-            // if >3 cell dies
-            // if =3 cell becomes alive
-
-            for (int x = 0; x < Table.GetLength(1); x++)
-            {
-                for (int y = 0; y < Table.GetLength(1); y++)
-                {
-                    int numOfAliveNeighbours = GetNeighbors(x, y);
-
-                    if (Table[x, y])
-                    {
-                        if (numOfAliveNeighbours < 2)
-                        {
-                            Table[x, y] = false;      //cell dies
-                        }
-
-                        if (numOfAliveNeighbours > 3)
-                        {
-                            Table[x, y] = false;      //cell dies
-                        }
-
-                        else
-                        {
-                            if (numOfAliveNeighbours == 3)
-                            {
-                                Table[x, y] = true;    //cell becomes alive
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         public void FullCycle()
