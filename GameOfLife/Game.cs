@@ -6,42 +6,53 @@ namespace GameOfLife
 {
     public class Game
     {
-        public int heigth;
-        public int width;
-        public bool[,] Table;
+        public int Heigth;
+        public int Width;
+        public int AliveCells;
+        public bool[,] NowGeneration;
+        public bool[,] NextGeneration;
 
-        public Game (int heigth, int width)
+
+        public Game (int Heigth, int Width)
         {
-            this.heigth = heigth;
-            this.width = width;
-            Table = new bool[width, heigth];
+            this.Heigth = Heigth;
+            this.Width = Width;
+            NowGeneration = new bool[Width, Heigth];            //current generation wich we output
+            NextGeneration = new bool[Width, Heigth];           //new generation which is used for current generation creation
             GenerateBoard();
         }
-        public void StartGame()                         //starts the game by proposing select field's size
+
+        /// <summary>
+        /// starts the game by proposing select field's size
+        /// currently is in program class
+        /// </summary>
+        public void StartGame()
         {
             //define board size
-           // Console.Write("Enter board width: ");
-            //width = int.Parse(Console.ReadLine());      // TO DO: check if user entered number
+           // Console.Write("Enter board Width: ");
+            //Width = int.Parse(Console.ReadLine());      // TO DO: check if user entered number
 
             /* CheckTheEnteredValue();
 
-            if (width <= 0)
+            if (Width <= 0)
             {
                 Console.WriteLine("Entered number is negative. Please enter a positive number.");
             }
             */
-            // Console.Write("Enter board heigth: ");
-            // heigth = int.Parse(Console.ReadLine());
+            // Console.Write("Enter board Heigth: ");
+            // Heigth = int.Parse(Console.ReadLine());
             /*
             CheckTheEnteredValue();
-            if (heigth <= 0)
+            if (Heigth <= 0)
             {
                 Console.WriteLine("Entered number is negative. Please enter a positive number.");
             }*/
-
         }
 
-        public void CheckTheEnteredValue()      //checks if entered value is numeric        can be moved to program
+        /// <summary>
+        /// Checks if entered value is numeric
+        /// </summary>
+        public void CheckTheEnteredValue()
         {
             int value;
             while (!int.TryParse(Console.ReadLine(), out value))
@@ -49,87 +60,140 @@ namespace GameOfLife
                 Console.WriteLine("Entered value is not numeric.");
             }
         }
-        private void GenerateBoard()                     //generates new board with random chars and prints it out
+
+        /// <summary>
+        /// Generates new random board
+        /// </summary>
+        private void GenerateBoard()
         {
-            //generate random numbers for bool array
             Random randomBool = new Random();
-
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < Width; x++)
             {
-                for (int y = 0; y < heigth; y++)
+                for (int y = 0; y < Heigth; y++)
                 {
-                    Table[x, y] = randomBool.Next(0, 2) == 1;
-
+                    NowGeneration[x, y] = randomBool.Next(0, 2) == 1;
                 }
             }
         }
 
-        public void OutputBoard()
+        /// <summary>
+        /// Prints out a board
+        /// </summary>
+        public void PrintBoard()
         {
             Console.Clear();
             Console.WriteLine();
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < Width; x++)
             {
-                for (int y = 0; y < heigth; y++)
+                for (int y = 0; y < Heigth; y++)
                 {
-                    Console.Write(Table[x, y] ? "O" : " ");
+                    Console.Write(NowGeneration[x, y] ? "O" : " ");
                 }
                 Console.WriteLine();
             }
             //Console.SetCursorPosition(0, Console.WindowTop);
         }
 
-        private void Generation()
+        /// <summary>
+        /// Creates a new generation based on CountNeigbors
+        /// </summary>
+        private void CreateNextGeneration()
         {
-            for (int x = 0; x < heigth; x++)
+            for (int i = 0; i < Width; i++)
             {
-                for (int y = 0; y < width; y++)
+                for (int j = 0; j < Heigth; j++)
                 {
-                    int numOfAliveNeighbors = NumOfNeighbors(x, y);
-
-                    if (Table[x, y])
+                    NextGeneration[i, j] = NowGeneration[i, j];
+                    int neighbor = CountNeighbors(i, j);
+                    if (neighbor < 2 || neighbor > 3)
                     {
-                        if (numOfAliveNeighbors < 2)
-                        {
-                            Table[x, y] = false;
-                        }
-
-                        if (numOfAliveNeighbors > 3)
-                        {
-                            Table[x, y] = false;
-                        }
+                        NextGeneration[i, j] = false;
                     }
-                    else
+                    else if (neighbor == 3)
                     {
-                        if (numOfAliveNeighbors == 3)
-                        {
-                            Table[x, y] = true;
-                        }
+                        NextGeneration[i, j] = true;
                     }
                 }
             }
+            bool[,] temp = NowGeneration;               //replacing arrays
+            NowGeneration = NextGeneration;
+            NextGeneration = temp;
         }
 
-        private int NumOfNeighbors(int row, int col)
+        /// <summary>
+        /// Counts neighbors
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        private int CountNeighbors(int x, int y)
         {
-            int NumOfAliveNeighbors = 0;
-            for (int x = row - 1; x < row + 2; x++)
+            int count = 0;
+            for (int i = x - 1; i <= x + 1; i++)
             {
-                for (int y = col - 1; y < col + 2; y++)
+                for (int j = y - 1; j <= y + 1; j++)
                 {
-                    if (!((x < 0 || y < 0) || (x >= heigth || y >= width)))
-                    {
-                        if (Table[x, y] == true) NumOfAliveNeighbors++;
-                    }
+                    if (i == x && j == y) continue;
+                    if (IdentifyAliveNeighbor(i, j)) count++;
                 }
             }
-            return NumOfAliveNeighbors;
+            return count;
         }
 
-        public void FullCycle()
+        /// <summary>
+        /// Identifies if neighbqour is alive
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        private bool IdentifyAliveNeighbor (int x, int y)
         {
-            OutputBoard();
-            Generation();
+            if (x < 0 || y < 0) return false;
+            {
+                if (x >= Width || y >= Heigth)
+                {
+                    return false;
+                }
+            }
+            return NowGeneration[x, y];
+        }
+
+        /// <summary>
+        /// counts total number af alive cells on the board
+        /// </summary>
+        public void CountNumberOfAliveCells()
+        {
+            AliveCells = 0;
+            for (int x = 0; x < Width; x++ )
+            {
+                for (int y = 0; y < Heigth; y++)
+                if (NowGeneration[x,y] == true)
+                    {
+                        AliveCells++;
+                    }
+            }
+        }
+
+        /// <summary>
+        /// Prints number of alive cells on the board
+        /// </summary>
+        public void PrintNumberOfAliveCells()
+        {
+            Console.WriteLine("Alive cells: " + AliveCells);
+        }
+
+        public void SaveToFile()
+        {
+
+        }
+
+        /// <summary>
+        /// Executes full cycle = PrintsBoard + CreateNextGeneration
+        /// </summary>
+        public void ExecuteFullCycle()
+        {
+            PrintBoard();
+            CreateNextGeneration();
         }
 
    }
