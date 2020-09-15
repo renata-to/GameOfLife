@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace GameOfLife
 {
@@ -52,19 +53,12 @@ namespace GameOfLife
         /// <summary>
         /// Checks if entered value is numeric
         /// </summary>
-        public void CheckTheEnteredValue()
-        {
-            int value;
-            while (!int.TryParse(Console.ReadLine(), out value))
-            {
-                Console.WriteLine("Entered value is not numeric.");
-            }
-        }
+        
 
         /// <summary>
         /// Generates new random board
         /// </summary>
-        private void GenerateBoard()
+        public void GenerateBoard()
         {
             Random randomBool = new Random();
             for (int x = 0; x < Width; x++)
@@ -97,7 +91,7 @@ namespace GameOfLife
         /// <summary>
         /// Creates a new generation based on CountNeigbors
         /// </summary>
-        private void CreateNextGeneration()
+        public void CreateNextGeneration()
         {
             for (int i = 0; i < Width; i++)
             {
@@ -115,9 +109,14 @@ namespace GameOfLife
                     }
                 }
             }
-            bool[,] temp = NowGeneration;               //replacing arrays
+            
+        }
+
+        public void SwitchArrays()
+        {
+            bool[,] Switched = NowGeneration;
             NowGeneration = NextGeneration;
-            NextGeneration = temp;
+            NextGeneration = Switched;
         }
 
         /// <summary>
@@ -182,10 +181,40 @@ namespace GameOfLife
             Console.WriteLine("Alive cells: " + AliveCells);
         }
 
-        public void SaveToFile()
+        /// <summary>
+        /// Saves application into text file
+        /// </summary>
+        public void SaveGameToFile()
+        {
+            try
+            {
+                StreamWriter sw = new StreamWriter(@"C:\Users\renate.tomilova\Desktop\Sample.txt");
+                for (int x = 0; x < Width; x++)
+                {
+                    for (int y = 0; y < Heigth; y++)
+                    {
+                        sw.Write(NowGeneration[x, y] ? "O" : " ");
+                    }
+                    sw.WriteLine();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message);
+            }
+            finally
+            {
+                Console.WriteLine("Executing finally block.");
+            }
+        }
+        /// <summary>
+        /// Loads game from the file
+        /// </summary>
+        public void LoadGame()
         {
 
         }
+
 
         /// <summary>
         /// Executes full cycle = PrintsBoard + CreateNextGeneration
@@ -194,6 +223,7 @@ namespace GameOfLife
         {
             PrintBoard();
             CreateNextGeneration();
+            SwitchArrays();
         }
 
    }
