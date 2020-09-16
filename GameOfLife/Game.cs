@@ -188,30 +188,31 @@ namespace GameOfLife
         {
             try
             {
-                StreamWriter sw = new StreamWriter(@"C:\Users\renate.tomilova\Desktop\Sample.txt");
-                for (int x = 0; x < Width; x++)
+                using (StreamWriter sw = new StreamWriter(@"C:\Users\renate.tomilova\Desktop\Sample.txt"))
                 {
-                    for (int y = 0; y < Heigth; y++)
+                    for (int x = 0; x < Width; x++)
                     {
-                        sw.Write(NowGeneration[x, y] ? "O" : " ");
+                        for (int y = 0; y < Heigth; y++)
+                        {
+                            sw.Write(NowGeneration[x, y] ? "O" : " ");
+                        }
+                        sw.WriteLine();
                     }
-                    sw.WriteLine();
                 }
+
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message);
             }
-            finally
-            {
-                Console.WriteLine("Executing finally block.");
-            }
+            
         }
         /// <summary>
         /// Loads game from the file
         /// </summary>
         public void LoadGame()
         {
+            StreamReader reader = new StreamReader(@"C:\Users\renate.tomilova\Desktop\Sample.txt");
 
         }
 
