@@ -9,11 +9,12 @@ namespace GameOfLife
     {
         public ConsoleKeyInfo cki;
 
+        
         /// <summary>
         /// Game initiation menu to 
         /// </summary>
         /// <returns></returns>
-        public Game InitiateGame()
+        public void InitiateGame()
         {
             WelcomeToTheGame();
             ShowGameMenu();
@@ -21,41 +22,42 @@ namespace GameOfLife
             switch (choise)
             {
                 case 1:
-                    return StartGame();
-
+                    StartGame();
+                    break;
                 case 2:
-                    return LoadGame();
-
+                    LoadGame();
+                    break;
                 case 3:
-                    return null;
+                    break;
             }
-            return null;
         }
 
         /// <summary>
         /// Starts game be proposing to enter field sizes
         /// </summary>
         /// <returns></returns>
-        public Game StartGame()
+        public void StartGame()
         {
             Console.Clear();
             Console.Write("Enter board width: ");
-            int width;
-            while (!int.TryParse(Console.ReadLine(), out width))
+            int Width;
+            while (!int.TryParse(Console.ReadLine(), out Width))
             {
                 Console.WriteLine("Entered value is not numeric. Please enter number from 1 to 50: ");
             }
-            CheckEnteredNumberRange(width);
+            CheckEnteredNumberRange(Width);
 
             Console.Write("Enter board heigth: ");
-            int heigth;
-            while (!int.TryParse(Console.ReadLine(), out heigth))
+            int Heigth;
+            while (!int.TryParse(Console.ReadLine(), out Heigth))
             {
                 Console.WriteLine("Entered value is not numeric.");
             }
-            CheckEnteredNumberRange(heigth);
+            CheckEnteredNumberRange(Heigth);
+            PlayGame(Heigth,Width);
 
-            Game session = new Game(heigth, width);
+
+           /* Game session = new Game(Heigth, Width);
             int gen = 0;
             do
             {
@@ -67,16 +69,39 @@ namespace GameOfLife
                 Thread.Sleep(1000);
                 //while (Console.ReadKey().Key != ConsoleKey.Enter) { } // added to check if neighbour are counting correctly. will be removed.
             } while (!(Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape));        //stops app
-
-            return session;
+           */
+            // return session;
         }
+
+
         /// <summary>
-        /// This method will be used for executing full game cycle and will be called in the Program.cs
+        /// This method will be used for executing full game cycle
         /// </summary>
-        public void PlayGame()
+        public void PlayGame(int Heigth, int Width)
         {
-
+            Game session = new Game(Heigth,Width);
+            int gen = 0;
+            do
+            {
+                session.ExecuteFullCycle();
+                Console.WriteLine();
+                Console.WriteLine("Generation: " + gen++);
+                session.CountNumberOfAliveCells();
+                session.PrintNumberOfAliveCells();
+                session.SaveGameToFile();
+                Thread.Sleep(1000);
+                //while (Console.ReadKey().Key != ConsoleKey.Enter) { } // added to check if neighbour are counting correctly. will be removed.
+            } while (!(Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape));        //stops app
         }
+
+        public void CheckIfEnteredValueIsNumeric(int value)
+        {
+            while (!int.TryParse(Console.ReadLine(), out value))
+            {
+                Console.WriteLine("Entered value is not numeric.");
+            }
+        }
+
         public void WelcomeToTheGame()
         {
             Console.WriteLine("<><><><><><><><>><><><>><><>");
@@ -84,6 +109,7 @@ namespace GameOfLife
             Console.WriteLine("<><><><><><><><>><><><>><><>");
             Console.WriteLine();
         }
+
         public void ShowGameMenu()
         {
             Console.WriteLine("To start a new game please enter 1.");
