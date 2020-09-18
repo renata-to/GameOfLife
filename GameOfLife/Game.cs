@@ -112,6 +112,9 @@ namespace GameOfLife
             
         }
 
+        /// <summary>
+        /// Switchs NowGeneration and NextGeneration arrays so "main" array is reusable
+        /// </summary>
         public void SwitchArrays()
         {
             bool[,] Switched = NowGeneration;
@@ -125,7 +128,7 @@ namespace GameOfLife
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        private int CountNeighbors(int x, int y)
+        private int CountNeighbors(int x, int y)        //coordinates
         {
             int count = 0;
             for (int i = x - 1; i <= x + 1; i++)
@@ -136,6 +139,7 @@ namespace GameOfLife
                     if (IdentifyAliveNeighbor(i, j)) count++;
                 }
             }
+
             return count;
         }
 
@@ -154,6 +158,7 @@ namespace GameOfLife
                     return false;
                 }
             }
+
             return NowGeneration[x, y];
         }
 
@@ -163,13 +168,13 @@ namespace GameOfLife
         public void CountNumberOfAliveCells()
         {
             AliveCells = 0;
-            for (int x = 0; x < Width; x++ )
+            for (int x = 0; x < Width; x++)
             {
                 for (int y = 0; y < Heigth; y++)
                 if (NowGeneration[x,y] == true)
-                    {
+                {
                         AliveCells++;
-                    }
+                }
             }
         }
 
@@ -207,15 +212,17 @@ namespace GameOfLife
             }
             
         }
+
         /// <summary>
         /// Loads game from the file
         /// </summary>
         public void LoadGame()
         {
-            StreamReader reader = new StreamReader(@"C:\Users\renate.tomilova\Desktop\Sample.txt");
+            string fileName = @"C:\Users\renate.tomilova\Desktop\Sample.txt";
+            StreamReader reader = new StreamReader(fileName);
+
 
         }
-
 
         /// <summary>
         /// Executes full cycle = PrintsBoard + CreateNextGeneration

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 
 namespace GameOfLife
 {
@@ -9,12 +11,12 @@ namespace GameOfLife
     {
         public ConsoleKeyInfo cki;
 
-        
+
         /// <summary>
         /// Game initiation menu to 
         /// </summary>
         /// <returns></returns>
-        public void InitiateGame()
+        public async void InitiateGame()
         {
             WelcomeToTheGame();
             ShowGameMenu();
@@ -33,10 +35,9 @@ namespace GameOfLife
         }
 
         /// <summary>
-        /// Starts game be proposing to enter field sizes
+        /// Starts game by proposing to enter field sizes
         /// </summary>
-        /// <returns></returns>
-        public void StartGame()
+        public async void StartGame()
         {
             Console.Clear();
             Console.Write("Enter board width: ");
@@ -54,32 +55,17 @@ namespace GameOfLife
                 Console.WriteLine("Entered value is not numeric.");
             }
             CheckEnteredNumberRange(Heigth);
-            PlayGame(Heigth,Width);
 
+            PlayGame(Heigth, Width);
 
-           /* Game session = new Game(Heigth, Width);
-            int gen = 0;
-            do
-            {
-                session.ExecuteFullCycle();
-                Console.WriteLine();
-                Console.WriteLine("Generation: " + gen++);
-                session.CountNumberOfAliveCells();
-                session.PrintNumberOfAliveCells();
-                Thread.Sleep(1000);
-                //while (Console.ReadKey().Key != ConsoleKey.Enter) { } // added to check if neighbour are counting correctly. will be removed.
-            } while (!(Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape));        //stops app
-           */
-            // return session;
         }
-
 
         /// <summary>
         /// This method will be used for executing full game cycle
         /// </summary>
-        public void PlayGame(int Heigth, int Width)
+        public async void PlayGame(int Heigth, int Width)
         {
-            Game session = new Game(Heigth,Width);
+            Game session = new Game(Heigth, Width);
             int gen = 0;
             do
             {
@@ -89,9 +75,8 @@ namespace GameOfLife
                 session.CountNumberOfAliveCells();
                 session.PrintNumberOfAliveCells();
                 session.SaveGameToFile();
-                Thread.Sleep(1000);
-                //while (Console.ReadKey().Key != ConsoleKey.Enter) { } // added to check if neighbour are counting correctly. will be removed.
-            } while (!(Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape));        //stops app
+                await Task.Delay(1000);
+            } while (!(Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape));
         }
 
         public void CheckIfEnteredValueIsNumeric(int value)
@@ -102,6 +87,9 @@ namespace GameOfLife
             }
         }
 
+        /// <summary>
+        /// Prints out welcome message
+        /// </summary>
         public void WelcomeToTheGame()
         {
             Console.WriteLine("<><><><><><><><>><><><>><><>");
@@ -110,6 +98,9 @@ namespace GameOfLife
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Shows main menu to select from start, load, exit.
+        /// </summary>
         public void ShowGameMenu()
         {
             Console.WriteLine("To start a new game please enter 1.");
@@ -117,6 +108,10 @@ namespace GameOfLife
             Console.WriteLine("To exit game please enter 3.");
         }
 
+        /// <summary>
+        /// Checks if entered number is in the range
+        /// </summary>
+        /// <param name="value"></param>
         public void CheckEnteredNumberRange(int value)
         {
             if (value <= 0 || value > 50)
@@ -125,10 +120,13 @@ namespace GameOfLife
             }
         }
 
+        /// <summary>
+        /// Wiil be used to load game from the file
+        /// </summary>
+        /// <returns></returns>
         public Game LoadGame()
         {
             return null;
         }
-
     }
 }
