@@ -8,7 +8,7 @@ namespace GameOfLife
         private static void Main(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Backlog backlog = new Backlog();
+            GameManager backlog = new GameManager();
             backlog.InitiateGame();
 
             Console.ReadLine();

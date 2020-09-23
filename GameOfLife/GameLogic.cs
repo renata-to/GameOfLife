@@ -2,22 +2,25 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using GameOfLife;
+using System.Timers;
 
 namespace GameOfLife
 {
-    public class Game
+    public class GameLogic
     {
-        public int Heigth;
-        public int Width;
-        public int AliveCells;
+        public int heigth { get; private set; }
+        public int width { get; private set; }
+        public int AliveCells { get; set; }
+        public int Generation { get; private set; }
         public bool[,] NowGeneration;
         public bool[,] NextGeneration;
 
 
-        public Game (int Heigth, int Width)
+        public GameLogic (int Heigth, int Width)
         {
-            this.Heigth = Heigth;
-            this.Width = Width;
+            this.heigth = Heigth;
+            this.width = Width;
             NowGeneration = new bool[Width, Heigth];            //current generation wich we output
             NextGeneration = new bool[Width, Heigth];           //new generation which is used for current generation creation
             GenerateBoard();
@@ -50,52 +53,33 @@ namespace GameOfLife
             }*/
         }
 
-        /// <summary>
-        /// Checks if entered value is numeric
-        /// </summary>
-        
-
+ 
         /// <summary>
         /// Generates new random board
         /// </summary>
         public void GenerateBoard()
         {
             Random randomBool = new Random();
-            for (int x = 0; x < Width; x++)
+            for (int x = 0; x < width; x++)
             {
-                for (int y = 0; y < Heigth; y++)
+                for (int y = 0; y < heigth; y++)
                 {
                     NowGeneration[x, y] = randomBool.Next(0, 2) == 1;
                 }
             }
         }
 
-        /// <summary>
-        /// Prints out a board
-        /// </summary>
-        public void PrintBoard()
-        {
-            Console.Clear();
-            Console.WriteLine();
-            for (int x = 0; x < Width; x++)
-            {
-                for (int y = 0; y < Heigth; y++)
-                {
-                    Console.Write(NowGeneration[x, y] ? "O" : " ");
-                }
-                Console.WriteLine();
-            }
-            //Console.SetCursorPosition(0, Console.WindowTop);
-        }
+
 
         /// <summary>
         /// Creates a new generation based on CountNeigbors
         /// </summary>
         public void CreateNextGeneration()
         {
-            for (int i = 0; i < Width; i++)
+            Generation++;
+            for (int i = 0; i < width; i++)
             {
-                for (int j = 0; j < Heigth; j++)
+                for (int j = 0; j < heigth; j++)
                 {
                     NextGeneration[i, j] = NowGeneration[i, j];
                     int neighbor = CountNeighbors(i, j);
@@ -128,15 +112,21 @@ namespace GameOfLife
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        private int CountNeighbors(int x, int y)        //coordinates
+        private int CountNeighbors(int col, int row)        //coordinates
         {
             int count = 0;
-            for (int i = x - 1; i <= x + 1; i++)
+            for (int x = col - 1; x <= col + 1; x++)
             {
-                for (int j = y - 1; j <= y + 1; j++)
+                for (int y = row - 1; y <= row + 1; y++)
                 {
-                    if (i == x && j == y) continue;
-                    if (IdentifyAliveNeighbor(i, j)) count++;
+                    if (x == col && y == row)
+                    {
+                        continue;
+                    }
+                    if (IdentifyAliveNeighbor(x, y))
+                    {
+                        count++;
+                    }
                 }
             }
 
@@ -153,7 +143,7 @@ namespace GameOfLife
         {
             if (x < 0 || y < 0) return false;
             {
-                if (x >= Width || y >= Heigth)
+                if (x >= width || y >= heigth)
                 {
                     return false;
                 }
@@ -168,12 +158,12 @@ namespace GameOfLife
         public void CountNumberOfAliveCells()
         {
             AliveCells = 0;
-            for (int x = 0; x < Width; x++)
+            for (int x = 0; x < width; x++)
             {
-                for (int y = 0; y < Heigth; y++)
+                for (int y = 0; y < heigth; y++)
                 if (NowGeneration[x,y] == true)
                 {
-                        AliveCells++;
+                    AliveCells++;
                 }
             }
         }
@@ -187,7 +177,16 @@ namespace GameOfLife
         }
 
         /// <summary>
-        /// Saves application into text file
+        /// Prints number of generation
+        /// </summary>
+        public void PrintNumberOfGeneration()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Generation: " + Generation);
+        }
+
+        /// <summary>
+        /// Saves application into text file using StreamWriter
         /// </summary>
         public void SaveGameToFile()
         {
@@ -195,9 +194,9 @@ namespace GameOfLife
             {
                 using (StreamWriter sw = new StreamWriter(@"C:\Users\renate.tomilova\Desktop\Sample.txt"))
                 {
-                    for (int x = 0; x < Width; x++)
+                    for (int x = 0; x < width; x++)
                     {
-                        for (int y = 0; y < Heigth; y++)
+                        for (int y = 0; y < heigth; y++)
                         {
                             sw.Write(NowGeneration[x, y] ? "O" : " ");
                         }
@@ -214,13 +213,27 @@ namespace GameOfLife
         }
 
         /// <summary>
-        /// Loads game from the file
+        /// Loads game from the file using StreamReader
         /// </summary>
         public void LoadGame()
         {
-            string fileName = @"C:\Users\renate.tomilova\Desktop\Sample.txt";
-            StreamReader reader = new StreamReader(fileName);
+            using (StreamReader reader = new StreamReader(@"C:\Users\renate.tomilova\Desktop\Sample.txt"))
+            {
+                string[] board = reader.ReadLine().Split(" ");
+                int width = int.Parse(board[0]);
+                int heigth = int.Parse(board[1]);
+                NowGeneration = new bool[width, heigth];
 
+                for (int x = 0; x < width; x++)
+                {
+                    string line = reader.ReadLine();
+                    for (int y = 0; y < line.Length; y++)
+                    {
+                        bool cell = line[y] == '0';
+                        NowGeneration[x, y] = cell;
+                    }
+                }
+            }
 
         }
 
@@ -229,7 +242,8 @@ namespace GameOfLife
         /// </summary>
         public void ExecuteFullCycle()
         {
-            PrintBoard();
+            ConsoleManager console = new ConsoleManager();
+            console.PrintBoard(this);
             CreateNextGeneration();
             SwitchArrays();
         }
