@@ -9,29 +9,30 @@ namespace GameOfLife
 {
     public class GameManager
     {
+        private FileManager fileManager;
+        private ConsoleManager consoleManager = new ConsoleManager();
         private Timer timer;
         public ConsoleKeyInfo cki;
-        private FileManager fileManager;
         private GameLogic gameLogic;
+        public List<GameLogic> Games = new List<GameLogic>();
+        public List<int> GameNumberId = new List<int>();
 
-        
-        /*public GameManager()
+        public GameManager()
         {
             timer = new Timer(1000);
             timer.AutoReset = true;
             timer.Elapsed += OnTimerElapsed;
-            timer.Enabled = true;
-        }*/
+            //timer.Enabled = true;
+        }
 
         /// <summary>f
-        /// Game initiation menu to 
+        /// Game initiation menu with options to start new game, start 1000 games, load last game or exit game
         /// </summary>
         /// <returns></returns>
         public void InitiateGame()
         {
-            ConsoleManager console = new ConsoleManager();
-            console.WelcomeToTheGame();
-            console.ShowGameMenu();
+            consoleManager.WelcomeToTheGame();
+            consoleManager.ShowGameMenu();
             int choise = int.Parse(Console.ReadLine());
             switch (choise)
             {
@@ -39,9 +40,12 @@ namespace GameOfLife
                     StartGame();
                     break;
                 case 2:
-                    LoadJSON();
+                    StartAllGames();
                     break;
                 case 3:
+                    LoadJSON();
+                    break;
+                case 4:
                     break;
             }
         }
@@ -54,11 +58,76 @@ namespace GameOfLife
             Console.Clear();
             int Width = CheckUserInput("Please enter board width: ");
             int Heigth = CheckUserInput("Please enter board heigth: ");
-          
+
             PlayGame(Heigth, Width);
 
         }
 
+        /// <summary>
+        /// Generates 1000 random boards and adds them to the list
+        /// </summary>
+        public void StartAllGames()
+        {
+            Console.Clear();
+            int width = CheckUserInput("Please enter board width: ");
+            int heigth = CheckUserInput("Please enter board heigth: ");
+            GameLogic session = new GameLogic(heigth, width);
+            for (int j = 0; j <1000; j++)
+            {
+                session.GenerateBoard();
+                Games.Add(session);
+            }
+
+            SelectGames();
+
+        }
+
+        /// <summary>
+        /// Adds ucer selected game IDs into GameNumberID ist
+        /// </summary>
+        public void SelectGames()
+        {
+            consoleManager.ProposeGames();
+            for (int i = 0; i < 8; i++)
+            {
+                int GameID = CheckUserInput("Please select game you wants to see on the screen: ");
+                GameNumberId.Add(GameID);
+            }
+        }
+        
+
+        /// <summary>
+        /// Plays all games from the list
+        /// </summary>
+        public void PlayAllGames()
+        {
+            foreach(GameLogic game in Games)
+            {
+
+            }
+        }
+
+        /// <summary>
+        /// Prints 8 selected games on console
+        /// </summary>
+        public void ShowSelectedGames()
+        {
+            //prints only selected game
+        }
+
+        /// <summary>
+        /// Shows statistics for alive cells
+        /// </summary>
+        public void CountTotalNumberOfAliveCells()
+        {
+
+        }
+
+        /// <summary>
+        /// Cecks if user entered numeric value and if the value is in the range
+        /// </summary>
+        /// <param name="message">Choise wich console is proposing</param>
+        /// <returns></returns>
         private int CheckUserInput(string message)
         {
             while (true)
@@ -84,29 +153,8 @@ namespace GameOfLife
         public void PlayGame(int Heigth, int Width)
         {
             GameLogic session = new GameLogic(Heigth, Width);
-
-            do
-            {
-                session.ExecuteFullCycle();
-                session.PrintNumberOfGeneration();
-                session.CountNumberOfAliveCells();
-                session.PrintNumberOfAliveCells();
-                System.Threading.Thread.Sleep(1000);
-                //session.SaveGameToFile();
-                //SaveJSON();
-            } while (!(Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Escape));
-        }
-
-        /// <summary>
-        /// Checks if entered number is in the range
-        /// </summary>
-        /// <param name="value"></param>
-        public void CheckEnteredNumberRange(int value)
-        {
-            if (value <= 0 || value > 50)
-            {
-                Console.WriteLine("Entered number is out of range. Please enter a number from 1 to 50.");
-            }
+            Games.Add(session);
+            StartTimer();
         }
 
         /// <summary>
@@ -121,28 +169,51 @@ namespace GameOfLife
         }
 
         /// <summary>
-        /// Used for saving the game using JSON
+        /// Saves the game using JSON
         /// </summary>
         public void SaveJSON()
         {
-            FileManager fileManager = new FileManager(@"C: \Users\renate.tomilova\Desktop\Sample.txt");
+            //FileManager fileManager = new FileManager();
+            //GameLogic gameLogic = new GameLogic(0,0);
             fileManager.SaveGame(gameLogic);
         }
 
+        /// <summary>
+        /// Loads the game from the file using JSON
+        /// </summary>
         public void LoadJSON()
         {
             fileManager.LoadGame();
         }
 
+        /// <summary>
+        /// Starts timer
+        /// </summary>
         public void StartTimer()
         {
             timer.Start();
         }
 
+        /// <summary>
+        /// Executes game during 1 second
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            GameLogic game = new GameLogic(0,0);
-            game.ExecuteFullCycle();
+            Games[0].ExecuteOneFullCycle();
+            Games[0].PrintNumberOfGeneration();
+            Games[0].CountNumberOfAliveCells();
+            Games[0].PrintNumberOfAliveCells();
+            //SaveJSON();
+        }
+
+        /// <summary>
+        /// Prints selected games on the console
+        /// </summary>
+        public void PrintSelectedGames()
+        {
+
         }
 
     }

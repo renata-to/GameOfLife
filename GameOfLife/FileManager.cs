@@ -20,16 +20,23 @@ namespace GameOfLife
         /// </summary>
         public void SaveGame(GameLogic gamelogic)
         {
-            string jsonString;
-            jsonString = JsonConvert.SerializeObject(gamelogic);
-            File.WriteAllText(@"C: \Users\renate.tomilova\Desktop\Sample.txt", jsonString);
+            try
+            {
+                string jsonString;
+                jsonString = JsonConvert.SerializeObject(gamelogic);
+                File.WriteAllText(@"C:\Users\renate.tomilova\Desktop\Sample.txt", jsonString);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public GameManager LoadGame()
         {
             try
             {
-                string jsonString = File.ReadAllText(@"C: \Users\renate.tomilova\Desktop\Sample.txt");
+                string jsonString = File.ReadAllText(@"C:\Users\renate.tomilova\Desktop\Sample.txt");
                 var gameLogic = JsonConvert.DeserializeObject<GameManager>(jsonString);
                 return null;
             }
