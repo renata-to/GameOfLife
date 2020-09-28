@@ -15,6 +15,8 @@ namespace GameOfLife
         public int Generation { get; private set; }
         public bool[,] NowGeneration;
         public bool[,] NextGeneration;
+        public List<int> AliveCellsStats = new List<int>();
+
 
 
         public GameLogic (int Heigth, int Width)
@@ -24,33 +26,6 @@ namespace GameOfLife
             NowGeneration = new bool[Width, Heigth];            //current generation wich we output
             NextGeneration = new bool[Width, Heigth];           //new generation which is used for current generation creation
             GenerateBoard();
-        }
-
-        /// <summary>
-        /// starts the game by proposing select field's size
-        /// currently is in program class
-        /// </summary>
-        public void StartGame()
-        {
-            //define board size
-           // Console.Write("Enter board Width: ");
-            //Width = int.Parse(Console.ReadLine());      // TO DO: check if user entered number
-
-            /* CheckTheEnteredValue();
-
-            if (Width <= 0)
-            {
-                Console.WriteLine("Entered number is negative. Please enter a positive number.");
-            }
-            */
-            // Console.Write("Enter board Heigth: ");
-            // Heigth = int.Parse(Console.ReadLine());
-            /*
-            CheckTheEnteredValue();
-            if (Heigth <= 0)
-            {
-                Console.WriteLine("Entered number is negative. Please enter a positive number.");
-            }*/
         }
 
  
@@ -69,27 +44,25 @@ namespace GameOfLife
             }
         }
 
-
-
         /// <summary>
         /// Creates a new generation based on CountNeigbors
         /// </summary>
         public void CreateNextGeneration()
         {
             Generation++;
-            for (int i = 0; i < width; i++)
+            for (int x = 0; x < width; x++)
             {
-                for (int j = 0; j < heigth; j++)
+                for (int y = 0; y < heigth; y++)
                 {
-                    NextGeneration[i, j] = NowGeneration[i, j];
-                    int neighbor = CountNeighbors(i, j);
+                    NextGeneration[x, y] = NowGeneration[x, y];
+                    int neighbor = CountNeighbors(x, y);
                     if (neighbor < 2 || neighbor > 3)
                     {
-                        NextGeneration[i, j] = false;
+                        NextGeneration[x, y] = false;
                     }
                     else if (neighbor == 3)
                     {
-                        NextGeneration[i, j] = true;
+                        NextGeneration[x, y] = true;
                     }
                 }
             }
@@ -177,7 +150,7 @@ namespace GameOfLife
         }
 
         /// <summary>
-        /// Prints number of generation
+        /// Prints number of current generation
         /// </summary>
         public void PrintNumberOfGeneration()
         {
@@ -238,9 +211,9 @@ namespace GameOfLife
         }
 
         /// <summary>
-        /// Executes full cycle = PrintsBoard + CreateNextGeneration
+        /// Executes 1 full cycle. Prints board -> create new generation -> switch arrays
         /// </summary>
-        public void ExecuteFullCycle()
+        public void ExecuteOneFullCycle()
         {
             ConsoleManager console = new ConsoleManager();
             console.PrintBoard(this);
