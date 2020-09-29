@@ -34,7 +34,6 @@ namespace GameOfLife
         /// </summary>
         public void PrintBoard(GameLogic game)
         {
-            Console.Clear();
             Console.WriteLine();
             for (int x = 0; x < game.width; x++)
             {
@@ -66,6 +65,26 @@ namespace GameOfLife
         public void ShowGameNumber()
         {
 
+        }
+
+        public void PrintSelectedGames(List<GameLogic> Games, List<int> GameNumberId)
+        {
+            foreach (int index in GameNumberId)
+            {
+                GameLogic game = Games[index - 1];
+                PrintBoard(game);
+                game.PrintNumberOfGeneration();
+                game.CountNumberOfAliveCells();
+                game.PrintNumberOfAliveCells();
+
+            }
+        }
+
+        public void ShowPauseMenu()
+        {
+            Console.WriteLine("1. Continue the game.");
+            Console.WriteLine("2. Change games on the board.");
+            Console.WriteLine("3. Exit the game.");
         }
     }
 }
