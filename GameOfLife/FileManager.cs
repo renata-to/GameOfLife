@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using GameOfLife;
 using Newtonsoft.Json;
 
@@ -18,13 +20,23 @@ namespace GameOfLife
         /// <summary>
         /// Saves the game
         /// </summary>
-        public void SaveGame(GameLogic gamelogic)
+        public void SaveGame(List<GameLogic> games)
         {
             try
             {
-                string jsonString;
-                jsonString = JsonConvert.SerializeObject(gamelogic);
-                File.WriteAllText(@"C:\Users\renate.tomilova\Desktop\Sample.txt", jsonString);
+                //string jsonString;
+                //File.WriteAllText(@"C:\Users\renate.tomilova\Desktop\Sample.txt", jsonString);
+
+                var game = new JsonSerializerSettings { Formatting = Formatting.Indented };
+                var session = new GameManager
+                {
+                    Games = new List<GameLogic>
+                    {
+
+                    }
+                };
+
+                var file = JsonConvert.SerializeObject(session);
             }
             catch (Exception e)
             {

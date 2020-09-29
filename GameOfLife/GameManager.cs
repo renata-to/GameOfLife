@@ -9,20 +9,19 @@ namespace GameOfLife
 {
     public class GameManager
     {
-        private FileManager fileManager;
+        private FileManager fileManager = new FileManager(@"C:\Users\renate.tomilova\Desktop\Sample.txt");
         private ConsoleManager consoleManager = new ConsoleManager();
-        private Timer timer;
+        private readonly Timer timer;
         public ConsoleKeyInfo cki;
-        private GameLogic gameLogic;
         public List<GameLogic> Games = new List<GameLogic>();
         public List<int> GameNumberId = new List<int>();
+        private int choise;
 
         public GameManager()
         {
             timer = new Timer(1000);
             timer.AutoReset = true;
             timer.Elapsed += OnTimerElapsed;
-            //timer.Enabled = true;
         }
 
         /// <summary>f
@@ -33,7 +32,7 @@ namespace GameOfLife
         {
             consoleManager.WelcomeToTheGame();
             consoleManager.ShowGameMenu();
-            int choise = int.Parse(Console.ReadLine());
+            choise = int.Parse(Console.ReadLine());
             switch (choise)
             {
                 case 1:
@@ -66,62 +65,67 @@ namespace GameOfLife
         /// <summary>
         /// Generates 1000 random boards and adds them to the list
         /// </summary>
-        public void StartAllGames()
+        public void StartAllGames()     // WORKS. Games are generating and adding to the list
         {
             Console.Clear();
             int width = CheckUserInput("Please enter board width: ");
             int heigth = CheckUserInput("Please enter board heigth: ");
-            GameLogic session = new GameLogic(heigth, width);
-            for (int j = 0; j <1000; j++)
+
+            //generates 1000 boards
+            for (int j = 0; j < 1000; j++)
             {
-                session.GenerateBoard();
-                Games.Add(session);
+                GameLogic game = new GameLogic(width, heigth);
+                game.GenerateBoard();
+                Games.Add(game);
             }
 
             SelectGames();
+            PlayAllGames();
 
         }
 
         /// <summary>
         /// Adds ucer selected game IDs into GameNumberID ist
         /// </summary>
-        public void SelectGames()
+        public void SelectGames()       // WORKS. User input is saving to the list
         {
             consoleManager.ProposeGames();
             for (int i = 0; i < 8; i++)
             {
-                int GameID = CheckUserInput("Please select game you wants to see on the screen: ");
+                int GameID = CheckGameInput("Please select game you wants to see on the screen: ");
                 GameNumberId.Add(GameID);
             }
+
         }
-        
+
+        /// <summary>
+        /// This method will be used for executing full game cycle
+        /// </summary>
+        public void PlayGame(int Heigth, int Width)
+        {
+            GameLogic session = new GameLogic(Heigth, Width);
+            Games.Add(session);
+            StartTimer();
+        }
 
         /// <summary>
         /// Plays all games from the list
         /// </summary>
         public void PlayAllGames()
         {
-            foreach(GameLogic game in Games)
-            {
-
-            }
+            StartTimer();
         }
+
 
         /// <summary>
         /// Prints 8 selected games on console
         /// </summary>
         public void ShowSelectedGames()
         {
-            //prints only selected game
+            Console.Clear();
+            consoleManager.PrintSelectedGames(Games, GameNumberId);
         }
 
-        /// <summary>
-        /// Shows statistics for alive cells
-        /// </summary>
-        public void CountTotalNumberOfAliveCells()
-        {
-
-        }
 
         /// <summary>
         /// Cecks if user entered numeric value and if the value is in the range
@@ -148,24 +152,27 @@ namespace GameOfLife
         }
 
         /// <summary>
-        /// This method will be used for executing full game cycle
+        /// checks if userinput is numeric and within the range
         /// </summary>
-        public void PlayGame(int Heigth, int Width)
-        {
-            GameLogic session = new GameLogic(Heigth, Width);
-            Games.Add(session);
-            StartTimer();
-        }
-
-        /// <summary>
-        /// Loads game from the file using Stream.Reader
-        /// </summary>
+        /// <param name="message">game selection for input</param>
         /// <returns></returns>
-        public GameLogic LoadGame()
+        private int CheckGameInput(string message)
         {
-            GameLogic game = new GameLogic(0,0);
-            game.LoadGame();
-            return game;
+            while (true)
+            {
+                Console.Write(message);
+                int input = int.Parse(Console.ReadLine());
+
+                if (input <= 0 || input > 1000)
+                {
+                    Console.WriteLine("Please enter the number from 1 to 1000");
+                }
+                else
+                {
+                    return input;
+                }
+
+            }
         }
 
         /// <summary>
@@ -173,9 +180,7 @@ namespace GameOfLife
         /// </summary>
         public void SaveJSON()
         {
-            //FileManager fileManager = new FileManager();
-            //GameLogic gameLogic = new GameLogic(0,0);
-            fileManager.SaveGame(gameLogic);
+            //fileManager.SaveGame(gameLogic);
         }
 
         /// <summary>
@@ -201,20 +206,38 @@ namespace GameOfLife
         /// <param name="e"></param>
         private void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            Games[0].ExecuteOneFullCycle();
-            Games[0].PrintNumberOfGeneration();
-            Games[0].CountNumberOfAliveCells();
-            Games[0].PrintNumberOfAliveCells();
-            //SaveJSON();
+            try
+            {
+                if (choise == 2)
+                {
+                    Console.Clear();
+                    foreach (var game in Games)
+                    {
+                        game.CreateNextGeneration();
+                        game.SwitchArrays();
+                        game.CountNumberOfAliveCells();
+                    }
+                    ShowSelectedGames();
+                }
+
+                else if (choise == 1)
+                {
+                    Console.Clear();
+                    Games[0].ExecuteOneFullCycle();
+                    Games[0].PrintNumberOfGeneration();
+                    Games[0].CountNumberOfAliveCells();
+                    Games[0].PrintNumberOfAliveCells();
+                }
+            }
+
+            catch (Exception b)
+            {
+                Console.WriteLine(b.Message);
+            }
+
         }
 
-        /// <summary>
-        /// Prints selected games on the console
-        /// </summary>
-        public void PrintSelectedGames()
-        {
 
-        }
 
     }
 }
