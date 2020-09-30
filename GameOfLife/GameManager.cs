@@ -22,6 +22,7 @@ namespace GameOfLife
             timer = new Timer(1000);
             timer.AutoReset = true;
             timer.Elapsed += OnTimerElapsed;
+            timer.Enabled = false;
         }
 
         /// <summary>f
@@ -60,7 +61,7 @@ namespace GameOfLife
             int heigth = CheckUserInput("Please enter board heigth: ");
             //int gameAmount = CheckGameInput("How many games do you want to play?");
 
-            PlayGame(heigth, width);
+            PlayGame(width, heigth);
 
         }
 
@@ -86,6 +87,7 @@ namespace GameOfLife
 
         }
 
+
         /// <summary>
         /// Adds ucer selected game IDs into GameNumberID ist
         /// </summary>
@@ -100,22 +102,47 @@ namespace GameOfLife
 
         }
 
+
+
         /// <summary>
         /// This method will be used for executing full game cycle
         /// </summary>
-        private void PlayGame(int Heigth, int Width)
+        private void PlayGame(int heigth, int width)
         {
-            GameLogic session = new GameLogic(Heigth, Width);
+            GameLogic session = new GameLogic(heigth, width);
             Games.Add(session);
-            StartTimer();
+
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
+            while (true)
+            {
+                StartTimer();
+            }
+            
         }
 
         /// <summary>
-        /// Plays all games from the list
+        /// responsible for actions when game is paused
         /// </summary>
-        private void PlayAllGames()
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void myHandler(object sender, ConsoleCancelEventArgs args)
         {
-            StartTimer();
+            args.Cancel = true;
+            timer.Enabled = false;
+            timer.Elapsed -= OnTimerElapsed;
+            Pause();
+        }
+
+            /// <summary>
+            /// Plays all games from the list
+            /// </summary>
+            private void PlayAllGames()
+        {
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
+            while (true)
+            {
+                StartTimer();
+            }
         }
 
 
@@ -208,6 +235,7 @@ namespace GameOfLife
         /// <param name="e"></param>
         private void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
+
             try
             {
                 if (choise == 2)
@@ -246,26 +274,24 @@ namespace GameOfLife
         {
             consoleManager.ShowPauseMenu();
 
-            int selection = int.Parse(Console.ReadLine());
-            switch(selection)
-            {
-                case 1:
-                    //continue
+                int selection = int.Parse(Console.ReadLine());
+
+                switch (selection)
+                {
+                    case 1:
                     break;
-                case 2:
-                    //change games
-                    break;
-                case 3:
-                    //exit
-                    break;
-                default:
-                    Console.WriteLine("Please select action from the list.");
-                    break;
-            }
+                    case 2:
+                        SelectGames();
+                        break;
+                    case 3:
+                        break;
+                    default:
+                        Console.WriteLine("Please select action from the list.");
+                        break;
+                }
+            timer.Elapsed += OnTimerElapsed;
 
         }
-
-
 
     }
 }
