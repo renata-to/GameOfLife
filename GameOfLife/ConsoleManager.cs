@@ -54,34 +54,33 @@ namespace GameOfLife
             Console.WriteLine("Please select 8 games you want to see on the screen.");
         }
 
-        public void SelectGame()
-        {
-            Console.WriteLine("Game number: ");
-        }
 
         /// <summary>
-        /// Shows each game's number
+        /// Prints each of 8 selected games with it's alive cell number, generation number and Game ID
         /// </summary>
-        public void ShowGameNumber()
-        {
-
-        }
-
+        /// <param name="Games">List with random generated games</param>
+        /// <param name="GameNumberId">List with user game selection</param>
         public void PrintSelectedGames(List<GameLogic> Games, List<int> GameNumberId)
         {
             foreach (int index in GameNumberId)
             {
+                Console.WriteLine("Game #{0}:", index);
                 GameLogic game = Games[index - 1];
                 PrintBoard(game);
                 game.PrintNumberOfGeneration();
                 game.CountNumberOfAliveCells();
                 game.PrintNumberOfAliveCells();
+                Console.WriteLine();
 
             }
         }
 
+        /// <summary>
+        /// Shows pause menu with selections
+        /// </summary>
         public void ShowPauseMenu()
         {
+            Console.Clear();
             Console.WriteLine("1. Continue the game.");
             Console.WriteLine("2. Change games on the board.");
             Console.WriteLine("3. Exit the game.");

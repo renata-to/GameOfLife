@@ -22,6 +22,7 @@ namespace GameOfLife
             timer = new Timer(1000);
             timer.AutoReset = true;
             timer.Elapsed += OnTimerElapsed;
+            timer.Enabled = false;
         }
 
         /// <summary>f
@@ -47,25 +48,27 @@ namespace GameOfLife
                 case 4:
                     break;
             }
+
         }
 
         /// <summary>
         /// Starts game by proposing to enter field sizes
         /// </summary>
-        public void StartGame()
+        private void StartGame()
         {
             Console.Clear();
-            int Width = CheckUserInput("Please enter board width: ");
-            int Heigth = CheckUserInput("Please enter board heigth: ");
+            int width = CheckUserInput("Please enter board width: ");
+            int heigth = CheckUserInput("Please enter board heigth: ");
+            //int gameAmount = CheckGameInput("How many games do you want to play?");
 
-            PlayGame(Heigth, Width);
+            PlayGame(width, heigth);
 
         }
 
         /// <summary>
         /// Generates 1000 random boards and adds them to the list
         /// </summary>
-        public void StartAllGames()     // WORKS. Games are generating and adding to the list
+        private void StartAllGames()
         {
             Console.Clear();
             int width = CheckUserInput("Please enter board width: ");
@@ -84,10 +87,11 @@ namespace GameOfLife
 
         }
 
+
         /// <summary>
         /// Adds ucer selected game IDs into GameNumberID ist
         /// </summary>
-        public void SelectGames()       // WORKS. User input is saving to the list
+        private void SelectGames()
         {
             consoleManager.ProposeGames();
             for (int i = 0; i < 8; i++)
@@ -98,29 +102,54 @@ namespace GameOfLife
 
         }
 
+
+
         /// <summary>
         /// This method will be used for executing full game cycle
         /// </summary>
-        public void PlayGame(int Heigth, int Width)
+        private void PlayGame(int heigth, int width)
         {
-            GameLogic session = new GameLogic(Heigth, Width);
+            GameLogic session = new GameLogic(heigth, width);
             Games.Add(session);
-            StartTimer();
+
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
+            while (true)
+            {
+                StartTimer();
+            }
+            
         }
 
         /// <summary>
-        /// Plays all games from the list
+        /// responsible for actions when game is paused
         /// </summary>
-        public void PlayAllGames()
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void myHandler(object sender, ConsoleCancelEventArgs args)
         {
-            StartTimer();
+            args.Cancel = true;
+            timer.Enabled = false;
+            timer.Elapsed -= OnTimerElapsed;
+            Pause();
+        }
+
+            /// <summary>
+            /// Plays all games from the list
+            /// </summary>
+            private void PlayAllGames()
+        {
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
+            while (true)
+            {
+                StartTimer();
+            }
         }
 
 
         /// <summary>
         /// Prints 8 selected games on console
         /// </summary>
-        public void ShowSelectedGames()
+        private void ShowSelectedGames()
         {
             Console.Clear();
             consoleManager.PrintSelectedGames(Games, GameNumberId);
@@ -178,7 +207,7 @@ namespace GameOfLife
         /// <summary>
         /// Saves the game using JSON
         /// </summary>
-        public void SaveJSON()
+        private void SaveJSON()
         {
             //fileManager.SaveGame(gameLogic);
         }
@@ -186,7 +215,7 @@ namespace GameOfLife
         /// <summary>
         /// Loads the game from the file using JSON
         /// </summary>
-        public void LoadJSON()
+        private void LoadJSON()
         {
             fileManager.LoadGame();
         }
@@ -194,7 +223,7 @@ namespace GameOfLife
         /// <summary>
         /// Starts timer
         /// </summary>
-        public void StartTimer()
+        private void StartTimer()
         {
             timer.Start();
         }
@@ -206,6 +235,7 @@ namespace GameOfLife
         /// <param name="e"></param>
         private void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
+
             try
             {
                 if (choise == 2)
@@ -237,7 +267,31 @@ namespace GameOfLife
 
         }
 
+        /// <summary>
+        /// Pauses the game and proposes to continue, change games on console, or exit.
+        /// </summary>
+        private void Pause()
+        {
+            consoleManager.ShowPauseMenu();
 
+                int selection = int.Parse(Console.ReadLine());
+
+                switch (selection)
+                {
+                    case 1:
+                    break;
+                    case 2:
+                        SelectGames();
+                        break;
+                    case 3:
+                        break;
+                    default:
+                        Console.WriteLine("Please select action from the list.");
+                        break;
+                }
+            timer.Elapsed += OnTimerElapsed;
+
+        }
 
     }
 }
