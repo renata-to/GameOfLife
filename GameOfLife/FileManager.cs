@@ -27,16 +27,10 @@ namespace GameOfLife
                 //string jsonString;
                 //File.WriteAllText(@"C:\Users\renate.tomilova\Desktop\Sample.txt", jsonString);
 
-                var game = new JsonSerializerSettings { Formatting = Formatting.Indented };
-                var session = new GameManager
-                {
-                    Games = new List<GameLogic>
-                    {
+                var data = games.Select(game => game.AsGameData()).ToList();
+                var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+                File.WriteAllText(fileName, json);
 
-                    }
-                };
-
-                var file = JsonConvert.SerializeObject(session);
             }
             catch (Exception e)
             {
@@ -44,13 +38,13 @@ namespace GameOfLife
             }
         }
 
-        public GameManager LoadGame()
+        public List<GameLogic> LoadGame()
         {
             try
             {
-                string jsonString = File.ReadAllText(@"C:\Users\renate.tomilova\Desktop\Sample.txt");
-                var gameLogic = JsonConvert.DeserializeObject<GameManager>(jsonString);
-                return null;
+                string json = File.ReadAllText(fileName);
+                var data = JsonConvert.DeserializeObject<List<GameData>>(json);
+                return data.Select(info => new GameLogic(info.NowGeneration, info.Generation)).ToList();
             }
             catch (Exception e)
             {
