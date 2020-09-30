@@ -12,10 +12,12 @@ namespace GameOfLife
         private FileManager fileManager = new FileManager(@"C:\Users\renate.tomilova\Desktop\Sample.txt");
         private ConsoleManager consoleManager = new ConsoleManager();
         private readonly Timer timer;
-        public ConsoleKeyInfo cki;
+        private ConsoleKeyInfo cki;
         public List<GameLogic> Games = new List<GameLogic>();
-        public List<int> GameNumberId = new List<int>();
+        private List<int> GameNumberId = new List<int>();
         private int choise;
+        public int totalAliveCells;
+
 
         public GameManager()
         {
@@ -136,7 +138,7 @@ namespace GameOfLife
             /// <summary>
             /// Plays all games from the list
             /// </summary>
-            private void PlayAllGames()
+         private void PlayAllGames()
         {
             Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
             while (true)
@@ -209,7 +211,7 @@ namespace GameOfLife
         /// </summary>
         private void SaveJSON()
         {
-            //fileManager.SaveGame(gameLogic);
+            fileManager.SaveGame(Games);
         }
 
         /// <summary>
@@ -217,7 +219,8 @@ namespace GameOfLife
         /// </summary>
         private void LoadJSON()
         {
-            fileManager.LoadGame();
+            Games = fileManager.LoadGame();
+
         }
 
         /// <summary>
@@ -257,6 +260,7 @@ namespace GameOfLife
                     Games[0].PrintNumberOfGeneration();
                     Games[0].CountNumberOfAliveCells();
                     Games[0].PrintNumberOfAliveCells();
+                    SaveJSON();
                 }
             }
 
@@ -290,6 +294,11 @@ namespace GameOfLife
                         break;
                 }
             timer.Elapsed += OnTimerElapsed;
+
+        }
+
+        private void CountTotalAliveCells(List<GameLogic> Games)
+        {
 
         }
 

@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using GameOfLife;
 using System.Timers;
+using System.Linq;
 
 namespace GameOfLife
 {
@@ -15,8 +16,6 @@ namespace GameOfLife
         public int Generation { get; private set; }
         public bool[,] NowGeneration;
         public bool[,] NextGeneration;
-        public List<int> AliveCellsStats = new List<int>();
-
 
 
         public GameLogic (int Heigth, int Width)
@@ -28,7 +27,13 @@ namespace GameOfLife
             GenerateBoard();
         }
 
- 
+        public GameLogic(bool[,] nowGeneration, int generation)
+        {
+            NowGeneration = nowGeneration;
+            Generation = generation;
+        }
+
+
         /// <summary>
         /// Generates new random board
         /// </summary>
@@ -219,6 +224,24 @@ namespace GameOfLife
             console.PrintBoard(this);
             CreateNextGeneration();
             SwitchArrays();
+        }
+
+        /// <summary>
+        /// Holding data that is saving in the file
+        /// </summary>
+        /// <returns></returns>
+        public GameData AsGameData()
+        {
+            return new GameData()
+            {
+                NowGeneration = NowGeneration,
+                Generation = Generation,
+            };
+        }
+
+        public void CheckGameStatus()
+        {
+            bool isEqual = Enumerable.SequenceEqual(NowGeneration, NextGeneration);
         }
 
    }
