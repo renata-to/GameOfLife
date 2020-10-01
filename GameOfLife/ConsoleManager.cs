@@ -73,6 +73,7 @@ namespace GameOfLife
                 Console.WriteLine();
 
             }
+
         }
 
         /// <summary>
@@ -85,5 +86,6 @@ namespace GameOfLife
             Console.WriteLine("2. Change games on the board.");
             Console.WriteLine("3. Exit the game.");
         }
+
     }
 }

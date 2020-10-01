@@ -12,7 +12,6 @@ namespace GameOfLife
         private FileManager fileManager = new FileManager(@"C:\Users\renate.tomilova\Desktop\Sample.txt");
         private ConsoleManager consoleManager = new ConsoleManager();
         private readonly Timer timer;
-        private ConsoleKeyInfo cki;
         public List<GameLogic> Games = new List<GameLogic>();
         private List<int> GameNumberId = new List<int>();
         private int choise;
@@ -157,7 +156,6 @@ namespace GameOfLife
             consoleManager.PrintSelectedGames(Games, GameNumberId);
         }
 
-
         /// <summary>
         /// Cecks if user entered numeric value and if the value is in the range
         /// </summary>
@@ -244,13 +242,18 @@ namespace GameOfLife
                 if (choise == 2)
                 {
                     Console.Clear();
+                    totalAliveCells = 0;
                     foreach (var game in Games)
                     {
+                        totalAliveCells += game.AliveCells;
+
                         game.CreateNextGeneration();
                         game.SwitchArrays();
                         game.CountNumberOfAliveCells();
                     }
                     ShowSelectedGames();
+                    Console.WriteLine("Total number of alive cells: {0}", totalAliveCells);
+
                 }
 
                 else if (choise == 1)
@@ -297,10 +300,6 @@ namespace GameOfLife
 
         }
 
-        private void CountTotalAliveCells(List<GameLogic> Games)
-        {
-
-        }
 
     }
 }

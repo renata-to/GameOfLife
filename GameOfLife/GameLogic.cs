@@ -16,6 +16,9 @@ namespace GameOfLife
         public int Generation { get; private set; }
         public bool[,] NowGeneration;
         public bool[,] NextGeneration;
+        public int gameStatus;
+        public int totalNumberOfAliveCells { get; private set; }
+
 
 
         public GameLogic (int Heigth, int Width)
@@ -144,6 +147,8 @@ namespace GameOfLife
                     AliveCells++;
                 }
             }
+
+            totalNumberOfAliveCells = +AliveCells;
         }
 
         /// <summary>
@@ -239,9 +244,33 @@ namespace GameOfLife
             };
         }
 
-        public void CheckGameStatus()
+        private void CheckTheArrays()
         {
-            bool isEqual = Enumerable.SequenceEqual(NowGeneration, NextGeneration);
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < heigth; y++)
+
+                {
+                    //bool equals = AreArraysEqual(NowGeneration, NextGeneration);
+                }
+            }
+
+        }
+
+        private void AreArraysEqual()
+        {
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < heigth; y++)
+
+                {
+                    if (NowGeneration[x,y] != NextGeneration[x,y])
+                    {
+                        gameStatus = 0;
+                    }
+                }
+            }
         }
 
    }
