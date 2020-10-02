@@ -16,17 +16,13 @@ namespace GameOfLife
             this.fileName = fileName;
         }
 
-
         /// <summary>
-        /// Saves the game
+        /// Saves game to the file
         /// </summary>
         public void SaveGame(List<GameLogic> games)
         {
             try
             {
-                //string jsonString;
-                //File.WriteAllText(@"C:\Users\renate.tomilova\Desktop\Sample.txt", jsonString);
-
                 var data = games.Select(game => game.AsGameData()).ToList();
                 var json = JsonConvert.SerializeObject(data, Formatting.Indented);
                 File.WriteAllText(fileName, json);
@@ -38,6 +34,10 @@ namespace GameOfLife
             }
         }
 
+        /// <summary>
+        /// Loads game from the file
+        /// </summary>
+        /// <returns></returns>
         public List<GameLogic> LoadGame()
         {
             try

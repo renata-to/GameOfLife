@@ -23,9 +23,8 @@ namespace GameOfLife
         public void ShowGameMenu()
         {
             Console.WriteLine("To start a new game please enter 1.");
-            Console.WriteLine("To start 1000 games please enter 2.");
-            Console.WriteLine("To load previous game please enter 3.");
-            Console.WriteLine("To exit game please enter 4.");
+            Console.WriteLine("To load previous game please enter 2.");
+            Console.WriteLine("To exit game please enter 3.");
             Console.WriteLine();
         }
 
@@ -51,9 +50,9 @@ namespace GameOfLife
         /// </summary>
         public void ProposeGames()
         {
-            Console.WriteLine("Please select 8 games you want to see on the screen.");
+            Console.WriteLine();
+            Console.WriteLine("Please select games you want to see on the screen.");
         }
-
 
         /// <summary>
         /// Prints each of 8 selected games with it's alive cell number, generation number and Game ID
@@ -86,6 +85,7 @@ namespace GameOfLife
             Console.WriteLine("2. Change games on the board.");
             Console.WriteLine("3. Exit the game.");
         }
+
 
     }
 }
