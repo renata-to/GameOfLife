@@ -12,30 +12,29 @@ namespace GameOfLife
     {
         public int heigth { get; private set; }
         public int width { get; private set; }
-        public int AliveCells { get; set; }
-        public int Generation { get; private set; }
+        public int aliveCells { get; set; }
+        public int generation { get; private set; }
         public bool[,] NowGeneration;
         public bool[,] NextGeneration;
-        public int gameStatus;
+        public bool gameStatus;
         public int totalNumberOfAliveCells { get; private set; }
 
 
 
-        public GameLogic (int Heigth, int Width)
+        public GameLogic (int heigth, int width)
         {
-            this.heigth = Heigth;
-            this.width = Width;
-            NowGeneration = new bool[Width, Heigth];            //current generation wich we output
-            NextGeneration = new bool[Width, Heigth];           //new generation which is used for current generation creation
+            this.heigth = heigth;
+            this.width = width;
+            NowGeneration = new bool[width, heigth];            //current generation wich we output
+            NextGeneration = new bool[width, heigth];           //new generation which is used for current generation creation
             GenerateBoard();
         }
 
         public GameLogic(bool[,] nowGeneration, int generation)
         {
             NowGeneration = nowGeneration;
-            Generation = generation;
+            this.generation = generation;
         }
-
 
         /// <summary>
         /// Generates new random board
@@ -50,6 +49,8 @@ namespace GameOfLife
                     NowGeneration[x, y] = randomBool.Next(0, 2) == 1;
                 }
             }
+
+            CountNumberOfAliveCells();
         }
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace GameOfLife
         /// </summary>
         public void CreateNextGeneration()
         {
-            Generation++;
+            generation++;
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < heigth; y++)
@@ -138,17 +139,17 @@ namespace GameOfLife
         /// </summary>
         public void CountNumberOfAliveCells()
         {
-            AliveCells = 0;
+            aliveCells = 0;
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < heigth; y++)
                 if (NowGeneration[x,y] == true)
                 {
-                    AliveCells++;
+                    aliveCells++;
                 }
             }
 
-            totalNumberOfAliveCells = +AliveCells;
+            totalNumberOfAliveCells = +aliveCells;
         }
 
         /// <summary>
@@ -156,7 +157,7 @@ namespace GameOfLife
         /// </summary>
         public void PrintNumberOfAliveCells()
         {
-            Console.WriteLine("Alive cells: " + AliveCells);
+            Console.WriteLine("Alive cells: " + aliveCells);
         }
 
         /// <summary>
@@ -165,7 +166,7 @@ namespace GameOfLife
         public void PrintNumberOfGeneration()
         {
             Console.WriteLine();
-            Console.WriteLine("Generation: " + Generation);
+            Console.WriteLine("Generation: " + generation);
         }
 
         /// <summary>
@@ -240,38 +241,10 @@ namespace GameOfLife
             return new GameData()
             {
                 NowGeneration = NowGeneration,
-                Generation = Generation,
+                Generation = generation,
             };
         }
 
-        private void CheckTheArrays()
-        {
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < heigth; y++)
-
-                {
-                    //bool equals = AreArraysEqual(NowGeneration, NextGeneration);
-                }
-            }
-
-        }
-
-        private void AreArraysEqual()
-        {
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < heigth; y++)
-
-                {
-                    if (NowGeneration[x,y] != NextGeneration[x,y])
-                    {
-                        gameStatus = 0;
-                    }
-                }
-            }
-        }
 
    }
 }

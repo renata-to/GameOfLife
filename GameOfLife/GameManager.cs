@@ -16,6 +16,8 @@ namespace GameOfLife
         private List<int> GameNumberId = new List<int>();
         private int choise;
         public int totalAliveCells;
+        private int gameAmount;
+        private int visibleGames;
 
 
         public GameManager()
@@ -41,12 +43,9 @@ namespace GameOfLife
                     StartGame();
                     break;
                 case 2:
-                    StartAllGames();
-                    break;
-                case 3:
                     LoadJSON();
                     break;
-                case 4:
+                case 3:
                     break;
             }
 
@@ -58,36 +57,22 @@ namespace GameOfLife
         private void StartGame()
         {
             Console.Clear();
-            int width = CheckUserInput("Please enter board width: ");
-            int heigth = CheckUserInput("Please enter board heigth: ");
-            //int gameAmount = CheckGameInput("How many games do you want to play?");
-
-            PlayGame(width, heigth);
-
-        }
-
-        /// <summary>
-        /// Generates 1000 random boards and adds them to the list
-        /// </summary>
-        private void StartAllGames()
-        {
-            Console.Clear();
+            gameAmount = CheckGameInput("How many games do you want to play?");
+            visibleGames = CheckViewInput("How many games do you want to see on the screen?");
             int width = CheckUserInput("Please enter board width: ");
             int heigth = CheckUserInput("Please enter board heigth: ");
 
-            //generates 1000 boards
-            for (int j = 0; j < 1000; j++)
+            for (int j = 0; j < gameAmount; j++)
             {
                 GameLogic game = new GameLogic(width, heigth);
                 game.GenerateBoard();
                 Games.Add(game);
             }
 
-            SelectGames();
-            PlayAllGames();
+            CheckGameAmount();
+            PlayGame();
 
         }
-
 
         /// <summary>
         /// Adds ucer selected game IDs into GameNumberID ist
@@ -95,30 +80,36 @@ namespace GameOfLife
         private void SelectGames()
         {
             consoleManager.ProposeGames();
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < visibleGames; i++)
             {
-                int GameID = CheckGameInput("Please select game you wants to see on the screen: ");
+                int GameID = CheckGameInput("Please select game # you want to see on the screen: ");
                 GameNumberId.Add(GameID);
             }
 
         }
 
-
+        /// <summary>
+        /// If game amount is > 1 Console proposes to select games 
+        /// </summary>
+        private void CheckGameAmount()
+        {
+            if (gameAmount > 1)
+            {
+                SelectGames();
+            }
+        }
 
         /// <summary>
         /// This method will be used for executing full game cycle
         /// </summary>
-        private void PlayGame(int heigth, int width)
+        private void PlayGame()
         {
-            GameLogic session = new GameLogic(heigth, width);
-            Games.Add(session);
-
             Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
             while (true)
             {
                 StartTimer();
             }
-            
+
         }
 
         /// <summary>
@@ -133,19 +124,6 @@ namespace GameOfLife
             timer.Elapsed -= OnTimerElapsed;
             Pause();
         }
-
-            /// <summary>
-            /// Plays all games from the list
-            /// </summary>
-         private void PlayAllGames()
-        {
-            Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
-            while (true)
-            {
-                StartTimer();
-            }
-        }
-
 
         /// <summary>
         /// Prints 8 selected games on console
@@ -205,6 +183,30 @@ namespace GameOfLife
         }
 
         /// <summary>
+        /// Checks if number of visible games is less then total game amount
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        private int CheckViewInput(string message)
+        {
+            while (true)
+            {
+                Console.Write(message);
+                int input = int.Parse(Console.ReadLine());
+
+                if (input <= 0 || input > gameAmount)
+                {
+                    Console.WriteLine("Please enter the number that is less then selected game amount.");
+                }
+                else
+                {
+                    return input;
+                }
+
+            }
+        }
+
+        /// <summary>
         /// Saves the game using JSON
         /// </summary>
         private void SaveJSON()
@@ -239,13 +241,13 @@ namespace GameOfLife
 
             try
             {
-                if (choise == 2)
+                if (gameAmount > 1)
                 {
                     Console.Clear();
                     totalAliveCells = 0;
                     foreach (var game in Games)
                     {
-                        totalAliveCells += game.AliveCells;
+                        totalAliveCells += game.aliveCells;
 
                         game.CreateNextGeneration();
                         game.SwitchArrays();
@@ -253,10 +255,11 @@ namespace GameOfLife
                     }
                     ShowSelectedGames();
                     Console.WriteLine("Total number of alive cells: {0}", totalAliveCells);
+                    SaveJSON();
 
                 }
 
-                else if (choise == 1)
+                else if (gameAmount == 1)
                 {
                     Console.Clear();
                     Games[0].ExecuteOneFullCycle();
