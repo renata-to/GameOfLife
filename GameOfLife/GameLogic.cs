@@ -16,7 +16,7 @@ namespace GameOfLife
         public int generation { get; private set; }
         public bool[,] NowGeneration;
         public bool[,] NextGeneration;
-        public bool gameStatus;
+        public bool gameStatus { get; private set; }
         public int totalNumberOfAliveCells { get; private set; }
 
 
@@ -58,6 +58,7 @@ namespace GameOfLife
         /// </summary>
         public void CreateNextGeneration()
         {
+            gameStatus = false;
             generation++;
             for (int x = 0; x < width; x++)
             {
@@ -72,6 +73,11 @@ namespace GameOfLife
                     else if (neighbor == 3)
                     {
                         NextGeneration[x, y] = true;
+                    }
+
+                    if (NowGeneration[x,y] != NextGeneration[x,y])
+                    {
+                        gameStatus = true;
                     }
                 }
             }

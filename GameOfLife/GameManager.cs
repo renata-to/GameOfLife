@@ -18,6 +18,7 @@ namespace GameOfLife
         public int totalAliveCells;
         private int gameAmount;
         private int visibleGames;
+        private int activeGameAmount;
 
 
         public GameManager()
@@ -58,7 +59,24 @@ namespace GameOfLife
         {
             Console.Clear();
             gameAmount = CheckGameInput("How many games do you want to play?");
-            visibleGames = CheckViewInput("How many games do you want to see on the screen?");
+
+            if (gameAmount > 1)
+            {
+                visibleGames = CheckViewInput("How many games do you want to see on the screen?");
+            }
+
+            SetupGame();
+            CheckGameAmount();
+            PlayGame();
+
+        }
+
+
+        /// <summary>
+        /// Sets board size and generates boards
+        /// </summary>
+        private void SetupGame()
+        {
             int width = CheckUserInput("Please enter board width: ");
             int heigth = CheckUserInput("Please enter board heigth: ");
 
@@ -68,10 +86,6 @@ namespace GameOfLife
                 game.GenerateBoard();
                 Games.Add(game);
             }
-
-            CheckGameAmount();
-            PlayGame();
-
         }
 
         /// <summary>
@@ -244,17 +258,26 @@ namespace GameOfLife
                 if (gameAmount > 1)
                 {
                     Console.Clear();
+
                     totalAliveCells = 0;
+                    activeGameAmount = 0;
+
                     foreach (var game in Games)
                     {
                         totalAliveCells += game.aliveCells;
-
                         game.CreateNextGeneration();
                         game.SwitchArrays();
                         game.CountNumberOfAliveCells();
+
+                        if (game.gameStatus == true)
+                        {
+                            activeGameAmount++;
+                        }
                     }
+
                     ShowSelectedGames();
                     Console.WriteLine("Total number of alive cells: {0}", totalAliveCells);
+                    Console.WriteLine("Total number of active games: {0}", activeGameAmount);
                     SaveJSON();
 
                 }

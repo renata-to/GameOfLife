@@ -4,6 +4,9 @@ using System.Text;
 
 namespace GameOfLife
 {
+    /// <summary>
+    /// holds data that is saved to the file
+    /// </summary>
     public class GameData
     {
         public bool[,] NowGeneration { get; set;  }
