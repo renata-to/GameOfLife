@@ -8,23 +8,24 @@ using System.Linq;
 
 namespace GameOfLife
 {
+    /// <summary>
+    /// Holds all game related calculations
+    /// </summary>
     public class GameLogic
     {
-        public int heigth { get; private set; }
-        public int width { get; private set; }
+        public int Heigth { get; private set; }
+        public int Width { get; private set; }
         public int aliveCells { get; set; }
-        public int generation { get; private set; }
-        public bool[,] NowGeneration;
-        public bool[,] NextGeneration;
+        public int Generation { get; private set; }
+        public bool[,] NowGeneration { get; set; }
+        public bool[,] NextGeneration { get; set; }
         public bool gameStatus { get; private set; }
         public int totalNumberOfAliveCells { get; private set; }
 
-
-
         public GameLogic (int heigth, int width)
         {
-            this.heigth = heigth;
-            this.width = width;
+            this.Heigth = heigth;
+            this.Width = width;
             NowGeneration = new bool[width, heigth];            //current generation wich we output
             NextGeneration = new bool[width, heigth];           //new generation which is used for current generation creation
             GenerateBoard();
@@ -33,7 +34,7 @@ namespace GameOfLife
         public GameLogic(bool[,] nowGeneration, int generation)
         {
             NowGeneration = nowGeneration;
-            this.generation = generation;
+            this.Generation = generation;
         }
 
         /// <summary>
@@ -42,9 +43,9 @@ namespace GameOfLife
         public void GenerateBoard()
         {
             Random randomBool = new Random();
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < Width; x++)
             {
-                for (int y = 0; y < heigth; y++)
+                for (int y = 0; y < Heigth; y++)
                 {
                     NowGeneration[x, y] = randomBool.Next(0, 2) == 1;
                 }
@@ -59,10 +60,10 @@ namespace GameOfLife
         public void CreateNextGeneration()
         {
             gameStatus = false;
-            generation++;
-            for (int x = 0; x < width; x++)
+            Generation++;
+            for (int x = 0; x < Width; x++)
             {
-                for (int y = 0; y < heigth; y++)
+                for (int y = 0; y < Heigth; y++)
                 {
                     NextGeneration[x, y] = NowGeneration[x, y];
                     int neighbor = CountNeighbors(x, y);
@@ -89,9 +90,9 @@ namespace GameOfLife
         /// </summary>
         public void SwitchArrays()
         {
-            bool[,] Switched = NowGeneration;
+            bool[,] switched = NowGeneration;
             NowGeneration = NextGeneration;
-            NextGeneration = Switched;
+            NextGeneration = switched;
         }
 
         /// <summary>
@@ -111,7 +112,8 @@ namespace GameOfLife
                     {
                         continue;
                     }
-                    if (IdentifyAliveNeighbor(x, y))
+
+                    if (IsAliveNeighbor(x, y))
                     {
                         count++;
                     }
@@ -127,14 +129,11 @@ namespace GameOfLife
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        private bool IdentifyAliveNeighbor (int x, int y)
+        private bool IsAliveNeighbor (int x, int y)
         {
-            if (x < 0 || y < 0) return false;
+            if (x < 0 || y < 0 || x >= Width || y >= Heigth)
             {
-                if (x >= width || y >= heigth)
-                {
-                    return false;
-                }
+                return false;
             }
 
             return NowGeneration[x, y];
@@ -146,16 +145,14 @@ namespace GameOfLife
         public void CountNumberOfAliveCells()
         {
             aliveCells = 0;
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < Width; x++)
             {
-                for (int y = 0; y < heigth; y++)
+                for (int y = 0; y < Heigth; y++)
                 if (NowGeneration[x,y] == true)
                 {
                     aliveCells++;
                 }
             }
-
-            totalNumberOfAliveCells = +aliveCells;
         }
 
         /// <summary>
@@ -172,7 +169,7 @@ namespace GameOfLife
         public void PrintNumberOfGeneration()
         {
             Console.WriteLine();
-            Console.WriteLine("Generation: " + generation);
+            Console.WriteLine("Generation: " + Generation);
         }
 
         /// <summary>
@@ -184,9 +181,9 @@ namespace GameOfLife
             {
                 using (StreamWriter sw = new StreamWriter(@"C:\Users\renate.tomilova\Desktop\Sample.txt"))
                 {
-                    for (int x = 0; x < width; x++)
+                    for (int x = 0; x < Width; x++)
                     {
-                        for (int y = 0; y < heigth; y++)
+                        for (int y = 0; y < Heigth; y++)
                         {
                             sw.Write(NowGeneration[x, y] ? "O" : " ");
                         }
@@ -247,7 +244,7 @@ namespace GameOfLife
             return new GameData()
             {
                 NowGeneration = NowGeneration,
-                Generation = generation,
+                Generation = Generation,
             };
         }
 

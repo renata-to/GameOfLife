@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 
 namespace GameOfLife
 {
+    /// <summary>
+    /// Manages game saving to the file / opening from the file
+    /// </summary>
     public class FileManager
     {
         private string fileName;
@@ -19,7 +22,7 @@ namespace GameOfLife
         /// <summary>
         /// Saves game to the file
         /// </summary>
-        public void SaveGame(List<GameLogic> games)
+        public void SaveGames(List<GameLogic> games)
         {
             try
             {
@@ -38,7 +41,7 @@ namespace GameOfLife
         /// Loads game from the file
         /// </summary>
         /// <returns></returns>
-        public List<GameLogic> LoadGame()
+        public List<GameLogic> LoadGames()
         {
             try
             {

@@ -7,20 +7,25 @@ using GameOfLife;
 
 namespace GameOfLife
 {
+    /// <summary>
+    /// Manages the game as itself
+    /// </summary>
     public class GameManager
     {
         private FileManager fileManager = new FileManager(@"C:\Users\renate.tomilova\Desktop\Sample.txt");
         private ConsoleManager consoleManager = new ConsoleManager();
         private readonly Timer timer;
-        public List<GameLogic> Games = new List<GameLogic>();
+        private List<GameLogic> Games = new List<GameLogic>();
         private List<int> GameNumberId = new List<int>();
         private int choise;
-        public int totalAliveCells;
+        private int totalAliveCells;
         private int gameAmount;
         private int visibleGames;
         private int activeGameAmount;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public GameManager()
         {
             timer = new Timer(1000);
@@ -49,7 +54,6 @@ namespace GameOfLife
                 case 3:
                     break;
             }
-
         }
 
         /// <summary>
@@ -57,7 +61,7 @@ namespace GameOfLife
         /// </summary>
         private void StartGame()
         {
-            Console.Clear();
+            consoleManager.CleanConsole();
             gameAmount = CheckGameInput("How many games do you want to play?");
 
             if (gameAmount > 1)
@@ -65,12 +69,10 @@ namespace GameOfLife
                 visibleGames = CheckViewInput("How many games do you want to see on the screen?");
             }
 
-            SetupGame();
             CheckGameAmount();
+            SetupGame();
             PlayGame();
-
         }
-
 
         /// <summary>
         /// Sets board size and generates boards
@@ -111,6 +113,10 @@ namespace GameOfLife
             {
                 SelectGames();
             }
+            else
+            {
+
+            }
         }
 
         /// <summary>
@@ -118,7 +124,7 @@ namespace GameOfLife
         /// </summary>
         private void PlayGame()
         {
-            Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(ActOnPause);
             while (true)
             {
                 StartTimer();
@@ -131,7 +137,7 @@ namespace GameOfLife
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        private void myHandler(object sender, ConsoleCancelEventArgs args)
+        private void ActOnPause(object sender, ConsoleCancelEventArgs args)
         {
             args.Cancel = true;
             timer.Enabled = false;
@@ -168,7 +174,6 @@ namespace GameOfLife
                 {
                     return input;
                 }
-
             }
         }
 
@@ -210,7 +215,7 @@ namespace GameOfLife
 
                 if (input <= 0 || input > gameAmount)
                 {
-                    Console.WriteLine("Please enter the number that is less then selected game amount.");
+                    consoleManager.PrintViewInputErrorMessage();
                 }
                 else
                 {
@@ -225,7 +230,7 @@ namespace GameOfLife
         /// </summary>
         private void SaveJSON()
         {
-            fileManager.SaveGame(Games);
+            fileManager.SaveGames(Games);
         }
 
         /// <summary>
@@ -233,8 +238,8 @@ namespace GameOfLife
         /// </summary>
         private void LoadJSON()
         {
-            Games = fileManager.LoadGame();
-
+            Games = fileManager.LoadGames();
+            PlayGame();
         }
 
         /// <summary>
@@ -252,13 +257,11 @@ namespace GameOfLife
         /// <param name="e"></param>
         private void OnTimerElapsed(object sender, ElapsedEventArgs e)
         {
-
             try
             {
                 if (gameAmount > 1)
                 {
-                    Console.Clear();
-
+                    consoleManager.CleanConsole();
                     totalAliveCells = 0;
                     activeGameAmount = 0;
 
@@ -276,15 +279,14 @@ namespace GameOfLife
                     }
 
                     ShowSelectedGames();
-                    Console.WriteLine("Total number of alive cells: {0}", totalAliveCells);
-                    Console.WriteLine("Total number of active games: {0}", activeGameAmount);
+                    consoleManager.ShowNumberOfTotalAliveCells(totalAliveCells);
+                    consoleManager.ShowActiveGameNumber(activeGameAmount);
                     SaveJSON();
-
                 }
-
+                
                 else if (gameAmount == 1)
                 {
-                    Console.Clear();
+                    consoleManager.CleanConsole();
                     Games[0].ExecuteOneFullCycle();
                     Games[0].PrintNumberOfGeneration();
                     Games[0].CountNumberOfAliveCells();
@@ -303,29 +305,26 @@ namespace GameOfLife
         /// <summary>
         /// Pauses the game and proposes to continue, change games on console, or exit.
         /// </summary>
-        private void Pause()
+        private bool Pause()
         {
             consoleManager.ShowPauseMenu();
-
-                int selection = int.Parse(Console.ReadLine());
-
-                switch (selection)
+            while (true)
+            {
+                switch (consoleManager.ShowPauseMenu())
                 {
-                    case 1:
-                    break;
-                    case 2:
+                    case PauseMenuSelection.ContinueGame:
+                        return true;
+                    case PauseMenuSelection.ChangeGame:
                         SelectGames();
                         break;
-                    case 3:
-                        break;
+                    case PauseMenuSelection.ExitGame:
+                        return false;
                     default:
-                        Console.WriteLine("Please select action from the list.");
+                        consoleManager.PrintPauseErrorMessage();
                         break;
                 }
-            timer.Elapsed += OnTimerElapsed;
-
+                timer.Elapsed += OnTimerElapsed;
+            }
         }
-
-
     }
 }
