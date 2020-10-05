@@ -4,6 +4,10 @@ using System.Text;
 
 namespace GameOfLife
 {
+
+    /// <summary>
+    /// Manages all output/console functions
+    /// </summary>
     public class ConsoleManager
     {
         /// <summary>
@@ -34,9 +38,9 @@ namespace GameOfLife
         public void PrintBoard(GameLogic game)
         {
             Console.WriteLine();
-            for (int x = 0; x < game.width; x++)
+            for (int x = 0; x < game.Width; x++)
             {
-                for (int y = 0; y < game.heigth; y++)
+                for (int y = 0; y < game.Heigth; y++)
                 {
                     Console.Write(game.NowGeneration[x, y] ? "O" : " ");
                 }
@@ -78,14 +82,68 @@ namespace GameOfLife
         /// <summary>
         /// Shows pause menu with selections
         /// </summary>
-        public void ShowPauseMenu()
+        public PauseMenuSelection ShowPauseMenu()
         {
             Console.Clear();
             Console.WriteLine("1. Continue the game.");
             Console.WriteLine("2. Change games on the board.");
             Console.WriteLine("3. Exit the game.");
+            while (true)
+            {
+                int selection = int.Parse(Console.ReadLine());
+                switch (selection)
+                {
+                    case 1:
+                        return PauseMenuSelection.ContinueGame;
+                    case 2:
+                        return PauseMenuSelection.ChangeGame;
+                    case 3:
+                        return PauseMenuSelection.ExitGame;
+                }
+            }
         }
 
+        /// <summary>
+        /// Prints error message if selection was not from the list
+        /// </summary>
+        public void PrintPauseErrorMessage()
+        {
+            Console.WriteLine("Please select action from the list.");
+        }
+
+        /// <summary>
+        /// Cleans console
+        /// </summary>
+        public void CleanConsole()
+        {
+            Console.Clear();
+        }
+
+        /// <summary>
+        /// prints total number of alive cells
+        /// </summary>
+        /// <param name="totalAliveCells">total number of alive cells</param>
+        public void ShowNumberOfTotalAliveCells(int totalAliveCells)
+        {
+            Console.WriteLine("Total number of alive cells: {0}", totalAliveCells);
+        }
+
+        /// <summary>
+        /// prints number of active games
+        /// </summary>
+        /// <param name="activeGameAmount">total number of active games</param>
+        public void ShowActiveGameNumber(int activeGameAmount)
+        {
+            Console.WriteLine("Total number of active games: {0}", activeGameAmount);
+        }
+
+        /// <summary>
+        /// Prints error message for number of selected visible games
+        /// </summary>
+        public void PrintViewInputErrorMessage()
+        {
+            Console.WriteLine("Please enter the number that is less then selected game amount.");
+        }
 
     }
 }

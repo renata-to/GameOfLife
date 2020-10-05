@@ -4,7 +4,6 @@ namespace GameOfLife
 {
     internal class Program
     {
-
         private static void Main(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
